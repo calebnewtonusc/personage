@@ -2,31 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html,
-body,
-#__next {
+html, body, #__next {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* Thin scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #FEA691; border-radius: 2px; opacity: 0.5; }
+::-webkit-scrollbar-thumb:hover { background: #FFB96C; }
