@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { getSystemPrompt } from '@/lib/system-prompt';
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'https://ollama.com';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'gemma3:4b';
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
 
 export async function POST(req: NextRequest) {
@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
       ...messages,
     ];
 
-    const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
+    // Ollama cloud uses OpenAI-compatible /v1/chat/completions
+    const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -24,10 +25,8 @@ export async function POST(req: NextRequest) {
         model: OLLAMA_MODEL,
         messages: ollamaMessages,
         stream: true,
-        options: {
-          temperature: 0.7,
-          top_p: 0.9,
-        },
+        temperature: 0.7,
+        top_p: 0.9,
       }),
     });
 
@@ -40,6 +39,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Parse OpenAI-compatible SSE stream: "data: {...}\n\n"
     const stream = new ReadableStream({
       async start(controller) {
         const reader = ollamaResponse.body!.getReader();
@@ -53,13 +53,17 @@ export async function POST(req: NextRequest) {
             const lines = text.split('\n').filter(Boolean);
 
             for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') continue;
               try {
-                const parsed = JSON.parse(line);
-                if (parsed.message?.content) {
-                  controller.enqueue(new TextEncoder().encode(parsed.message.content));
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(new TextEncoder().encode(content));
                 }
               } catch {
-                // skip malformed JSON lines
+                // skip malformed lines
               }
             }
           }
