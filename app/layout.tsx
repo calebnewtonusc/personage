@@ -13,13 +13,13 @@ const cormorant = Cormorant({
 export const metadata: Metadata = {
   title: 'Personage — Wellness Advisor',
   description:
-    'Get a personalized supplement formula tailored to your health goals — trusted by health professionals.',
+    'Personalized vitamins & supplements. Trusted by health professionals, loved by their patients.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`h-full ${cormorant.variable}`}>
-      <body className="h-full antialiased font-sans text-brand-charcoal bg-brand-cream">
+      <body className="h-full antialiased font-sans text-brand-charcoal bg-white">
         {children}
       </body>
     </html>

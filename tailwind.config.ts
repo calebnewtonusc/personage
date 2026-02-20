@@ -9,14 +9,11 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          teal:      '#144B50',
-          tealHov:   '#0f3a3e',
-          cream:     '#FFEDE4',
-          creamSoft: '#FFF8F4',
-          peach:     '#FFB96C',
-          coral:     '#FEA691',
-          yellow:    '#FFF3CB',
-          charcoal:  '#292929',
+          teal:     '#144b50',
+          tealHov:  '#3d3d3d',   // Personage exact button hover
+          cream:    '#ffede4',   // Personage secondary bg
+          peach:    '#ffbb99',   // Personage exact accent
+          charcoal: '#292929',   // Personage exact text
         },
       },
       fontFamily: {
@@ -25,7 +22,7 @@ const config: Config = {
       },
       keyframes: {
         slideUp: {
-          from: { opacity: '0', transform: 'translateY(10px)' },
+          from: { opacity: '0', transform: 'translateY(8px)' },
           to:   { opacity: '1', transform: 'translateY(0)' },
         },
         fadeIn: {
@@ -34,12 +31,12 @@ const config: Config = {
         },
         dot: {
           '0%, 60%, 100%': { transform: 'translateY(0)' },
-          '30%':            { transform: 'translateY(-5px)' },
+          '30%':            { transform: 'translateY(-4px)' },
         },
       },
       animation: {
-        slideUp: 'slideUp 0.25s ease-out both',
-        fadeIn:  'fadeIn 0.2s ease-out both',
+        slideUp: 'slideUp 0.22s ease-out both',
+        fadeIn:  'fadeIn 0.3s ease-out both',
         dot:     'dot 1.4s infinite ease-in-out',
       },
     },

@@ -6,27 +6,27 @@ import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 
 const GOALS = [
-  { label: 'Sleep & Recovery',    prompt: 'I want to improve my sleep and recovery.' },
-  { label: 'Energy & Focus',      prompt: 'I need more energy and mental focus.' },
-  { label: 'Immunity',            prompt: 'I want to strengthen my immune system.' },
-  { label: 'Beauty & Skin',       prompt: 'I want to improve my skin, hair, and nails.' },
-  { label: 'Stress & Mood',       prompt: 'I need help managing stress and improving my mood.' },
-  { label: 'Heart Health',        prompt: 'I want to support my heart and circulation.' },
-  { label: 'Weight Management',   prompt: 'I want help with weight and metabolism.' },
-  { label: 'Brain & Memory',      prompt: 'I want to support my brain health and memory.' },
+  { label: 'Sleep & Recovery',     prompt: 'I want to improve my sleep and recovery.' },
+  { label: 'Energy & Focus',       prompt: 'I need more energy and mental focus throughout the day.' },
+  { label: 'Immunity',             prompt: 'I want to strengthen my immune system.' },
+  { label: 'Beauty & Skin',        prompt: 'I want to improve my skin, hair, and nails from within.' },
+  { label: 'Stress & Mood',        prompt: 'I need help managing stress and improving my mood.' },
+  { label: 'Heart Health',         prompt: 'I want to support my heart health and circulation.' },
+  { label: 'Weight & Metabolism',  prompt: 'I want help with weight management and metabolism.' },
+  { label: 'Brain & Memory',       prompt: 'I want to support my brain health, focus, and memory.' },
 ];
 
 function TypingIndicator() {
   return (
     <div className="flex gap-3 items-end animate-fadeIn">
-      <div className="w-7 h-7 rounded-full bg-brand-teal flex-shrink-0 mb-0.5 flex items-center justify-center">
-        <span className="text-white text-[10px] font-bold tracking-widest">P</span>
+      <div className="w-7 h-7 rounded-full bg-brand-teal flex-shrink-0 flex items-center justify-center shadow-sm shadow-brand-teal/20">
+        <span className="text-white text-[9px] font-bold tracking-widest">P</span>
       </div>
-      <div className="bg-white rounded-2xl rounded-bl-sm shadow-sm px-4 py-3 flex gap-1.5 items-center">
+      <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3.5 flex gap-1.5 items-center">
         {[0, 1, 2].map(i => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-brand-coral/60 animate-dot"
+            className="w-[5px] h-[5px] rounded-full bg-brand-teal/25 animate-dot"
             style={{ animationDelay: `${i * 0.18}s` }}
           />
         ))}
@@ -42,7 +42,6 @@ export default function ChatInterface() {
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [showTyping, setShowTyping]   = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-
   const isWelcome = messages.length === 0;
 
   useEffect(() => {
@@ -53,18 +52,9 @@ export default function ChatInterface() {
     if (!content.trim() || isLoading) return;
 
     const userMsg: Message = {
-      id:        `u-${Date.now()}`,
-      role:      'user',
-      content:   content.trim(),
-      timestamp: new Date(),
+      id: `u-${Date.now()}`, role: 'user', content: content.trim(), timestamp: new Date(),
     };
     const asstId = `a-${Date.now()}`;
-    const asstMsg: Message = {
-      id:        asstId,
-      role:      'assistant',
-      content:   '',
-      timestamp: new Date(),
-    };
 
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -73,11 +63,10 @@ export default function ChatInterface() {
 
     try {
       const history = [...messages, userMsg].map(m => ({ role: m.role, content: m.content }));
-
       const res = await fetch('/api/chat', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history }),
       });
 
       if (!res.ok) {
@@ -87,11 +76,13 @@ export default function ChatInterface() {
 
       setShowTyping(false);
       setStreamingId(asstId);
-      setMessages(prev => [...prev, asstMsg]);
+      setMessages(prev => [
+        ...prev,
+        { id: asstId, role: 'assistant', content: '', timestamp: new Date() },
+      ]);
 
       const reader  = res.body!.getReader();
       const decoder = new TextDecoder();
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -102,16 +93,12 @@ export default function ChatInterface() {
       }
     } catch (err) {
       setShowTyping(false);
-      const errorMsg = err instanceof Error ? err.message : 'Something went wrong.';
-      setMessages(prev => [
-        ...prev,
-        {
-          id:        asstId,
-          role:      'assistant',
-          content:   `I'm having trouble connecting right now.\n\n**Error:** ${errorMsg}\n\nPlease check your Ollama configuration and try again.`,
-          timestamp: new Date(),
-        },
-      ]);
+      const msg = err instanceof Error ? err.message : 'Something went wrong.';
+      setMessages(prev => [...prev, {
+        id: asstId, role: 'assistant',
+        content: `Sorry, I'm having trouble connecting right now.\n\n**Error:** ${msg}\n\nPlease check your configuration and try again.`,
+        timestamp: new Date(),
+      }]);
     } finally {
       setIsLoading(false);
       setShowTyping(false);
@@ -122,37 +109,42 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-full">
 
-      {/* Messages or Welcome */}
-      <div className="flex-1 overflow-y-auto px-5 py-6">
-
+      <div className="flex-1 overflow-y-auto">
         {isWelcome ? (
-          /* ── Welcome State ─────────────────────────────── */
-          <div className="flex flex-col items-center justify-center min-h-full text-center gap-6 animate-fadeIn pb-8">
 
-            <div className="space-y-2">
-              <p className="text-[11px] text-brand-teal/60 tracking-[0.2em] uppercase font-medium">
-                Your Personage Advisor
-              </p>
-              <h1 className="font-serif italic font-light text-brand-teal leading-tight"
-                  style={{ fontSize: 'clamp(32px, 6vw, 48px)' }}>
-                Build your perfect formula.
-              </h1>
-              <p className="text-brand-charcoal/50 text-sm max-w-xs mx-auto leading-relaxed">
-                Tell me your health goals and I&apos;ll recommend a formula tailored just for you.
-              </p>
+          /* ── Welcome ────────────────────────────────── */
+          <div className="flex flex-col items-center justify-center min-h-full px-8 py-14 text-center animate-fadeIn">
+
+            {/* Avatar */}
+            <div className="w-14 h-14 rounded-full bg-brand-teal flex items-center justify-center mb-8 shadow-lg shadow-brand-teal/15">
+              <span className="text-white text-sm font-bold tracking-[0.15em]">P</span>
             </div>
 
-            {/* Goal chips */}
-            <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
+            {/* Heading */}
+            <h1
+              className="font-serif italic font-light text-brand-teal leading-[1.15] mb-3"
+              style={{ fontSize: 'clamp(26px, 4.5vw, 40px)' }}
+            >
+              Hi, I&apos;m your Personage<br />wellness advisor.
+            </h1>
+
+            {/* Subtext */}
+            <p className="text-brand-charcoal/40 text-[13px] leading-relaxed max-w-[270px] mb-10">
+              Tell me your health goals and I&apos;ll help build a formula made just for you.
+            </p>
+
+            {/* Goal pills — Personage button style: rounded-full, uppercase, bold */}
+            <div className="flex flex-wrap justify-center gap-2 max-w-[340px] mb-9">
               {GOALS.map(goal => (
                 <button
                   key={goal.label}
                   onClick={() => sendMessage(goal.prompt)}
                   className="
-                    text-left px-4 py-3 rounded-xl bg-white border border-brand-coral/20
-                    text-brand-teal text-[12.5px] font-medium tracking-wide
-                    hover:bg-brand-teal hover:text-white hover:border-brand-teal
-                    transition-all duration-150 shadow-sm
+                    px-[18px] py-[9px] rounded-full
+                    border border-brand-teal/20 text-brand-teal
+                    text-[10.5px] font-bold tracking-[0.12em] uppercase
+                    hover:bg-brand-teal hover:text-white hover:border-brand-teal hover:shadow-md hover:shadow-brand-teal/15
+                    transition-all duration-150
                   "
                 >
                   {goal.label}
@@ -160,14 +152,21 @@ export default function ChatInterface() {
               ))}
             </div>
 
-            <p className="text-[11px] text-brand-charcoal/30 tracking-wider uppercase">
-              or type your question below
-            </p>
+            {/* Divider */}
+            <div className="flex items-center gap-4 w-full max-w-[280px] text-gray-200">
+              <div className="flex-1 h-px bg-current" />
+              <span className="text-[9px] text-brand-charcoal/20 tracking-[0.22em] uppercase whitespace-nowrap">
+                or type below
+              </span>
+              <div className="flex-1 h-px bg-current" />
+            </div>
+
           </div>
 
         ) : (
-          /* ── Chat Messages ─────────────────────────────── */
-          <div className="space-y-4 max-w-full">
+
+          /* ── Chat Messages ───────────────────────────── */
+          <div className="px-5 py-7 space-y-5 max-w-2xl mx-auto w-full">
             {messages.map(msg => (
               <ChatMessage
                 key={msg.id}
@@ -178,12 +177,12 @@ export default function ChatInterface() {
             {showTyping && <TypingIndicator />}
             <div ref={bottomRef} />
           </div>
+
         )}
 
         {!isWelcome && <div ref={bottomRef} />}
       </div>
 
-      {/* Input */}
       <ChatInput
         value={input}
         onChange={setInput}
