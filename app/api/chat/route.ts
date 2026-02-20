@@ -1,8 +1,9 @@
 import { NextRequest } from 'next/server';
 import { getSystemPrompt } from '@/lib/system-prompt';
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'https://ollama.com';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +16,10 @@ export async function POST(req: NextRequest) {
 
     const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(OLLAMA_API_KEY && { Authorization: `Bearer ${OLLAMA_API_KEY}` }),
+      },
       body: JSON.stringify({
         model: OLLAMA_MODEL,
         messages: ollamaMessages,
