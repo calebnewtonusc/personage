@@ -2,8 +2,8 @@ import { NextRequest } from 'next/server';
 import { getSystemPrompt } from '@/lib/system-prompt';
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'https://ollama.com';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'gemma3:4b';
-const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
+const OLLAMA_MODEL    = process.env.OLLAMA_MODEL    || 'gemma3:4b';
+const OLLAMA_API_KEY  = process.env.OLLAMA_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
       ...messages,
     ];
 
-    // Ollama cloud uses OpenAI-compatible /v1/chat/completions
     const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/v1/chat/completions`, {
       method: 'POST',
       headers: {
@@ -42,14 +41,14 @@ export async function POST(req: NextRequest) {
     // Parse OpenAI-compatible SSE stream: "data: {...}\n\n"
     const stream = new ReadableStream({
       async start(controller) {
-        const reader = ollamaResponse.body!.getReader();
+        const reader  = ollamaResponse.body!.getReader();
         const decoder = new TextDecoder();
         try {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            const text = decoder.decode(value, { stream: true });
+            const text  = decoder.decode(value, { stream: true });
             const lines = text.split('\n').filter(Boolean);
 
             for (const line of lines) {
@@ -57,11 +56,9 @@ export async function POST(req: NextRequest) {
               const data = line.slice(6).trim();
               if (data === '[DONE]') continue;
               try {
-                const parsed = JSON.parse(data);
+                const parsed  = JSON.parse(data);
                 const content = parsed.choices?.[0]?.delta?.content;
-                if (content) {
-                  controller.enqueue(new TextEncoder().encode(content));
-                }
+                if (content) controller.enqueue(new TextEncoder().encode(content));
               } catch {
                 // skip malformed lines
               }

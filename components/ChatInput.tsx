@@ -35,7 +35,7 @@ export default function ChatInput({ value, onChange, onSend, isLoading }: ChatIn
           value={value}
           onChange={e => onChange(e.target.value)}
           onKeyDown={handleKey}
-          placeholder="Ask about your health goals, ingredients, or orders..."
+          placeholder="Describe patient goals, symptoms, or clinical context..."
           rows={1}
           disabled={isLoading}
           className="

@@ -6,14 +6,16 @@ import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 
 const GOALS = [
-  { label: 'Sleep & Recovery',     prompt: 'I want to improve my sleep and recovery.' },
-  { label: 'Energy & Focus',       prompt: 'I need more energy and mental focus throughout the day.' },
-  { label: 'Immunity',             prompt: 'I want to strengthen my immune system.' },
-  { label: 'Beauty & Skin',        prompt: 'I want to improve my skin, hair, and nails from within.' },
-  { label: 'Stress & Mood',        prompt: 'I need help managing stress and improving my mood.' },
-  { label: 'Heart Health',         prompt: 'I want to support my heart health and circulation.' },
-  { label: 'Weight & Metabolism',  prompt: 'I want help with weight management and metabolism.' },
-  { label: 'Brain & Memory',       prompt: 'I want to support my brain health, focus, and memory.' },
+  { label: 'Sleep & Recovery',      prompt: 'My patient needs help with sleep quality and overnight recovery. Please recommend a formula.' },
+  { label: 'Energy & Fatigue',      prompt: 'My patient is experiencing chronic fatigue and low energy. Please recommend an evidence-based formula.' },
+  { label: 'Inflammation & Pain',   prompt: 'My patient has chronic inflammation and joint pain. Please recommend a formula with evidence-based anti-inflammatory ingredients.' },
+  { label: 'Immunity',              prompt: 'I want to strengthen my patient\'s immune function. Please recommend an immunity formula.' },
+  { label: 'Stress & Mood',         prompt: 'My patient is dealing with chronic stress and mood dysregulation. Please recommend an adaptogen-based formula.' },
+  { label: 'Gut Health',            prompt: 'My patient has gut permeability and dysbiosis concerns. Please recommend a gut health formula.' },
+  { label: 'Brain & Memory',        prompt: 'My patient wants to support cognitive function and memory. Please recommend a nootropic formula.' },
+  { label: 'Heart Health',          prompt: 'My patient wants cardiovascular support. Please recommend a heart health formula with dosages.' },
+  { label: 'Hormonal Balance',      prompt: 'My patient is experiencing hormonal imbalance. Please recommend a formula to support hormonal regulation.' },
+  { label: 'Athletic Performance',  prompt: 'My patient is an athlete looking to optimize performance and recovery. Please recommend a formula.' },
 ];
 
 function TypingIndicator() {
@@ -96,7 +98,7 @@ export default function ChatInterface() {
       const msg = err instanceof Error ? err.message : 'Something went wrong.';
       setMessages(prev => [...prev, {
         id: asstId, role: 'assistant',
-        content: `Sorry, I'm having trouble connecting right now.\n\n**Error:** ${msg}\n\nPlease check your configuration and try again.`,
+        content: `Sorry, I'm having trouble connecting right now.\n\n**Error:** ${msg}\n\nPlease check your API configuration and try again.`,
         timestamp: new Date(),
       }]);
     } finally {
@@ -123,18 +125,18 @@ export default function ChatInterface() {
             {/* Heading */}
             <h1
               className="font-serif italic font-light text-brand-teal leading-[1.15] mb-3"
-              style={{ fontSize: 'clamp(26px, 4.5vw, 40px)' }}
+              style={{ fontSize: 'clamp(24px, 4vw, 36px)' }}
             >
-              Hi, I&apos;m your Personage<br />wellness advisor.
+              AI Formula<br />Recommendation Engine
             </h1>
 
             {/* Subtext */}
-            <p className="text-brand-charcoal/40 text-[13px] leading-relaxed max-w-[270px] mb-10">
-              Tell me your health goals and I&apos;ll help build a formula made just for you.
+            <p className="text-brand-charcoal/40 text-[13px] leading-relaxed max-w-[310px] mb-10">
+              Enter patient health goals, symptoms, or clinical context — and receive an evidence-based supplement formula with ingredients, dosages, and rationale.
             </p>
 
-            {/* Goal pills — Personage button style: rounded-full, uppercase, bold */}
-            <div className="flex flex-wrap justify-center gap-2 max-w-[340px] mb-9">
+            {/* Goal pills */}
+            <div className="flex flex-wrap justify-center gap-2 max-w-[380px] mb-9">
               {GOALS.map(goal => (
                 <button
                   key={goal.label}
@@ -156,7 +158,7 @@ export default function ChatInterface() {
             <div className="flex items-center gap-4 w-full max-w-[280px] text-gray-200">
               <div className="flex-1 h-px bg-current" />
               <span className="text-[9px] text-brand-charcoal/20 tracking-[0.22em] uppercase whitespace-nowrap">
-                or type below
+                or describe your case below
               </span>
               <div className="flex-1 h-px bg-current" />
             </div>
