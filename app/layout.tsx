@@ -11,9 +11,9 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  title: 'Personage — Wellness Advisor',
+  title: 'Personage — AI Formula Engine',
   description:
-    'Personalized vitamins & supplements. Trusted by health professionals, loved by their patients.',
+    'AI-powered supplement formula recommendations for practitioners. Input health goals or clinical context and receive evidence-based ingredient and dosage protocols.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
