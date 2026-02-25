@@ -4,20 +4,20 @@
 ![Ollama](https://img.shields.io/badge/Ollama-black?style=flat-square&logo=ollama&logoColor=white)
 ![SSE](https://img.shields.io/badge/Streaming_SSE-6366F1?style=flat-square&logo=lightning&logoColor=white)
 
-# Personage — AI Formula Recommendation Engine
+# Personage: AI Formula Recommendation Engine
 
-An AI-powered supplement formula recommendation tool built for [Personage](https://personage.com), a practitioner-focused platform where healthcare providers design fully personalized supplement formulas for their clients. Practitioners or consumers describe health goals or clinical context, and the engine returns structured, evidence-based formula recommendations with precise dosages and contraindication flags — streamed in real time.
+An AI-powered supplement formula recommendation tool built for [Personage](https://personage.com), a practitioner-focused platform where healthcare providers design fully personalized supplement formulas for their clients. Practitioners or consumers describe health goals or clinical context, and the engine returns structured, evidence-based formula recommendations with precise dosages and contraindication flags, streamed in real time.
 
 > Screenshot
 
 ## Features
 
-- **16 health categories** — Sleep, Energy, Inflammation, Immunity, Gut Health, Brain, Heart, Hormonal Balance, Athletic Performance, and more
-- **100+ evidence-backed ingredients** — every recommendation includes ingredient, dosage, mechanism of action, and clinical research rationale
-- **Real-time streaming** — responses stream token by token via Server-Sent Events (SSE), with a live typing indicator
-- **Practitioner and consumer modes** — works equally well for clinical notes ("patient has chronic fatigue, history of anxiety") or plain-language health goals
-- **Clinical safety notes** — each formula includes contraindications, drug interaction flags, estimated daily cost, and suggested delivery format
-- **Split-panel UI** — brand panel on desktop with feature summary; responsive single-column layout on mobile
+- **16 health categories** (Sleep, Energy, Inflammation, Immunity, Gut Health, Brain, Heart, Hormonal Balance, Athletic Performance, and more)
+- **100+ evidence-backed ingredients:** every recommendation includes ingredient, dosage, mechanism of action, and clinical research rationale
+- **Real-time streaming:** responses stream token by token via Server-Sent Events (SSE), with a live typing indicator
+- **Practitioner and consumer modes:** works equally well for clinical notes ("patient has chronic fatigue, history of anxiety") or plain-language health goals
+- **Clinical safety notes:** each formula includes contraindications, drug interaction flags, estimated daily cost, and suggested delivery format
+- **Split-panel UI:** brand panel on desktop with feature summary; responsive single-column layout on mobile
 
 ## Tech Stack
 
@@ -79,12 +79,12 @@ personage/
 └── types/index.ts            # Message + Supplement TypeScript interfaces
 ```
 
-> For educational purposes only — not a substitute for clinical judgment.
+> For educational purposes only, not a substitute for clinical judgment.
 
 ## About Personage
 
-Personage enables healthcare providers — nutritionists, naturopathic doctors, functional medicine clinicians — to create fully personalized supplement formulas for each of their clients. Personage handles compounding, packaging, and direct-to-client shipping under the practitioner's brand.
+Personage enables healthcare providers (nutritionists, naturopathic doctors, functional medicine clinicians) to create fully personalized supplement formulas for each of their clients. Personage handles compounding, packaging, and direct-to-client shipping under the practitioner's brand.
 
 ## Author
 
-**Caleb Newton** — [calebnewton.me](https://calebnewton.me)
+**Caleb Newton** at [calebnewton.me](https://calebnewton.me)
