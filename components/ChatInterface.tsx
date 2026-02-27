@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useReducer, useRef, useEffect, useCallback } from 'react';
 import { Message } from '@/types';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
@@ -25,11 +25,11 @@ function TypingIndicator() {
         <span className="text-white text-[9px] font-bold tracking-widest">P</span>
       </div>
       <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3.5 flex gap-1.5 items-center">
-        {[0, 1, 2].map(i => (
+        {[0, 1, 2].map(dotNum => (
           <span
-            key={i}
+            key={`dot-${dotNum}`}
             className="w-[5px] h-[5px] rounded-full bg-brand-teal/25 animate-dot"
-            style={{ animationDelay: `${i * 0.18}s` }}
+            style={{ animationDelay: `${dotNum * 0.18}s` }}
           />
         ))}
       </div>
@@ -37,12 +37,69 @@ function TypingIndicator() {
   );
 }
 
+// ── State / Reducer ──────────────────────────────────────────────────────────
+
+interface ChatState {
+  messages: Message[];
+  input: string;
+  isLoading: boolean;
+  streamingId: string | null;
+  showTyping: boolean;
+}
+
+type ChatAction =
+  | { type: 'SET_INPUT'; payload: string }
+  | { type: 'APPEND_USER_MSG'; payload: Message }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_SHOW_TYPING'; payload: boolean }
+  | { type: 'BEGIN_ASSISTANT_MSG'; payload: Message; streamingId: string }
+  | { type: 'APPEND_CHUNK'; id: string; chunk: string }
+  | { type: 'STREAMING_DONE' };
+
+const initialState: ChatState = {
+  messages: [],
+  input: '',
+  isLoading: false,
+  streamingId: null,
+  showTyping: false,
+};
+
+function chatReducer(state: ChatState, action: ChatAction): ChatState {
+  switch (action.type) {
+    case 'SET_INPUT':
+      return { ...state, input: action.payload };
+    case 'APPEND_USER_MSG':
+      return { ...state, messages: [...state.messages, action.payload], input: '' };
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+    case 'SET_SHOW_TYPING':
+      return { ...state, showTyping: action.payload };
+    case 'BEGIN_ASSISTANT_MSG':
+      return {
+        ...state,
+        showTyping: false,
+        streamingId: action.streamingId,
+        messages: [...state.messages, action.payload],
+      };
+    case 'APPEND_CHUNK':
+      return {
+        ...state,
+        messages: state.messages.map(m =>
+          m.id === action.id ? { ...m, content: m.content + action.chunk } : m
+        ),
+      };
+    case 'STREAMING_DONE':
+      return { ...state, isLoading: false, showTyping: false, streamingId: null };
+    default:
+      return state;
+  }
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
+
 export default function ChatInterface() {
-  const [messages, setMessages]       = useState<Message[]>([]);
-  const [input, setInput]             = useState('');
-  const [isLoading, setIsLoading]     = useState(false);
-  const [streamingId, setStreamingId] = useState<string | null>(null);
-  const [showTyping, setShowTyping]   = useState(false);
+  const [state, dispatch] = useReducer(chatReducer, initialState);
+  const { messages, input, isLoading, streamingId, showTyping } = state;
   const bottomRef = useRef<HTMLDivElement>(null);
   const isWelcome = messages.length === 0;
 
@@ -58,10 +115,9 @@ export default function ChatInterface() {
     };
     const asstId = `a-${Date.now()}`;
 
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setIsLoading(true);
-    setShowTyping(true);
+    dispatch({ type: 'APPEND_USER_MSG', payload: userMsg });
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_SHOW_TYPING', payload: true });
 
     try {
       const history = [...messages, userMsg].map(m => ({ role: m.role, content: m.content }));
@@ -76,12 +132,11 @@ export default function ChatInterface() {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      setShowTyping(false);
-      setStreamingId(asstId);
-      setMessages(prev => [
-        ...prev,
-        { id: asstId, role: 'assistant', content: '', timestamp: new Date() },
-      ]);
+      dispatch({
+        type: 'BEGIN_ASSISTANT_MSG',
+        payload: { id: asstId, role: 'assistant', content: '', timestamp: new Date() },
+        streamingId: asstId,
+      });
 
       const reader  = res.body!.getReader();
       const decoder = new TextDecoder();
@@ -89,22 +144,22 @@ export default function ChatInterface() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        setMessages(prev =>
-          prev.map(m => m.id === asstId ? { ...m, content: m.content + chunk } : m)
-        );
+        dispatch({ type: 'APPEND_CHUNK', id: asstId, chunk });
       }
     } catch (err) {
-      setShowTyping(false);
+      dispatch({ type: 'SET_SHOW_TYPING', payload: false });
       const msg = err instanceof Error ? err.message : 'Something went wrong.';
-      setMessages(prev => [...prev, {
-        id: asstId, role: 'assistant',
-        content: `Sorry, I'm having trouble connecting right now.\n\n**Error:** ${msg}\n\nPlease check your API configuration and try again.`,
-        timestamp: new Date(),
-      }]);
+      dispatch({
+        type: 'BEGIN_ASSISTANT_MSG',
+        payload: {
+          id: asstId, role: 'assistant',
+          content: `Sorry, I'm having trouble connecting right now.\n\n**Error:** ${msg}\n\nPlease check your API configuration and try again.`,
+          timestamp: new Date(),
+        },
+        streamingId: asstId,
+      });
     } finally {
-      setIsLoading(false);
-      setShowTyping(false);
-      setStreamingId(null);
+      dispatch({ type: 'STREAMING_DONE' });
     }
   }, [messages, isLoading]);
 
@@ -187,7 +242,7 @@ export default function ChatInterface() {
 
       <ChatInput
         value={input}
-        onChange={setInput}
+        onChange={(val) => dispatch({ type: 'SET_INPUT', payload: val })}
         onSend={sendMessage}
         isLoading={isLoading}
       />

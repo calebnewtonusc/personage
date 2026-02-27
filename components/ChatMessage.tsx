@@ -12,12 +12,12 @@ function InlineText({ text }: { text: string }) {
   const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
   return (
     <>
-      {parts.map((part, i) => {
+      {parts.map((part, partNum) => {
         if (part.startsWith('**') && part.endsWith('**'))
-          return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
+          return <strong key={`bold-${partNum}`} className="font-semibold">{part.slice(2, -2)}</strong>;
         if (part.startsWith('*') && part.endsWith('*'))
-          return <em key={i}>{part.slice(1, -1)}</em>;
-        return <span key={i}>{part}</span>;
+          return <em key={`em-${partNum}`}>{part.slice(1, -1)}</em>;
+        return <span key={`text-${partNum}`}>{part}</span>;
       })}
     </>
   );
@@ -42,8 +42,8 @@ function BotContent({ text }: { text: string }) {
     if (!listItems.length) return;
     nodes.push(
       <ul key={key++} className="my-2.5 space-y-1.5">
-        {listItems.map((item, i) => (
-          <li key={i} className="flex gap-2.5 items-start">
+        {listItems.map((item, itemNum) => (
+          <li key={`li-${itemNum}`} className="flex gap-2.5 items-start">
             <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-brand-peach flex-shrink-0" />
             <span className="leading-relaxed"><InlineText text={item} /></span>
           </li>
