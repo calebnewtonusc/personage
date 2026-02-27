@@ -1,7 +1,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js_16-black?style=flat-square&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![Ollama](https://img.shields.io/badge/Ollama-black?style=flat-square&logo=ollama&logoColor=white)
+![Anthropic](https://img.shields.io/badge/Anthropic-191919?style=flat-square&logo=anthropic&logoColor=white)
 ![SSE](https://img.shields.io/badge/Streaming_SSE-6366F1?style=flat-square&logo=lightning&logoColor=white)
 
 # Personage: AI Formula Recommendation Engine
@@ -27,7 +27,7 @@ An AI-powered supplement formula recommendation tool built for [Personage](https
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS with Personage brand tokens (teal `#144b50`, peach `#ffbb99`) |
 | Typography | Cormorant Garamond serif |
-| AI | Ollama (local or cloud) via OpenAI-compatible API |
+| AI | Claude (claude-sonnet-4-6) via Anthropic API |
 | Streaming | Server-Sent Events (SSE) |
 
 ## Getting Started
@@ -38,7 +38,7 @@ npm install
 
 # 2. Configure environment
 cp .env.local.example .env.local
-# Edit .env.local with your Ollama settings
+# Edit .env.local with your Anthropic API key
 
 # 3. Start dev server
 npm run dev
@@ -49,15 +49,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Environment Variables
 
 ```env
-# Ollama cloud
-OLLAMA_BASE_URL=https://ollama.com
-OLLAMA_MODEL=gemma3:4b
-OLLAMA_API_KEY=your_key_here
-
-# Or local Ollama
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.2
-OLLAMA_API_KEY=
+ANTHROPIC_API_KEY=your_key_here
 ```
 
 ## Project Structure
@@ -68,7 +60,7 @@ personage/
 │   ├── page.tsx              # Home: brand panel + chat layout
 │   ├── layout.tsx            # Root layout with fonts + metadata
 │   ├── globals.css           # Tailwind base imports
-│   └── api/chat/route.ts     # Streaming AI endpoint (Ollama)
+│   └── api/chat/route.ts     # Streaming AI endpoint (Anthropic Claude)
 ├── components/
 │   ├── ChatInterface.tsx     # Welcome screen + message thread + streaming
 │   ├── ChatInput.tsx         # Auto-expanding textarea input
