@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
 import ChatInterface from '@/components/ChatInterface';
+
+export const metadata: Metadata = {
+  title: 'Personage — AI Formula Recommendation Engine',
+  description:
+    'Practitioner-grade supplement recommendations with precise dosages and clinical rationale — built for health professionals.',
+};
 
 const FEATURES = [
   'Evidence-based ingredient rationale',
