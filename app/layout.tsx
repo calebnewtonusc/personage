@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Cormorant } from 'next/font/google';
 import './globals.css';
+import 'aos/dist/aos.css';
+import AOSInit from '@/components/AOSInit';
 
 const cormorant = Cormorant({
   subsets: ['latin'],
@@ -20,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`h-full ${cormorant.variable}`}>
       <body className="h-full antialiased font-sans text-brand-charcoal bg-white">
+        <AOSInit />
         {children}
       </body>
     </html>

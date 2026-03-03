@@ -4,6 +4,7 @@ import { useReducer, useRef, useEffect, useCallback } from 'react';
 import { Message } from '@/types';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
+import TypedWelcomeChat from './TypedWelcomeChat';
 
 const GOALS = [
   { label: 'Sleep & Recovery',      prompt: 'My patient needs help with sleep quality and overnight recovery. Please recommend a formula.' },
@@ -177,24 +178,25 @@ export default function ChatInterface() {
               <span className="text-white text-sm font-bold tracking-[0.15em]">P</span>
             </div>
 
-            {/* Heading */}
-            <h1
-              className="font-serif italic font-light text-brand-teal leading-[1.15] mb-3"
-              style={{ fontSize: 'clamp(24px, 4vw, 36px)' }}
-            >
-              AI Formula<br />Recommendation Engine
-            </h1>
+            {/* Heading with typed.js */}
+            <TypedWelcomeChat />
 
             {/* Subtext */}
-            <p className="text-brand-charcoal/40 text-[13px] leading-relaxed max-w-[310px] mb-10">
+            <p
+              data-aos="fade-up"
+              data-aos-delay="100"
+              className="text-brand-charcoal/40 text-[13px] leading-relaxed max-w-[310px] mb-10"
+            >
               Enter patient health goals, symptoms, or clinical context — and receive an evidence-based supplement formula with ingredients, dosages, and rationale.
             </p>
 
             {/* Goal pills */}
-            <div className="flex flex-wrap justify-center gap-2 max-w-[380px] mb-9">
-              {GOALS.map(goal => (
+            <div data-aos="fade-up" data-aos-delay="200" className="flex flex-wrap justify-center gap-2 max-w-[380px] mb-9">
+              {GOALS.map((goal, i) => (
                 <button
                   key={goal.label}
+                  data-aos="zoom-in"
+                  data-aos-delay={String(200 + i * 40)}
                   onClick={() => sendMessage(goal.prompt)}
                   className="
                     px-[18px] py-[9px] rounded-full

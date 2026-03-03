@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import ChatInterface from '@/components/ChatInterface';
+import GranimBackground from '@/components/GranimBackground';
+import TypedWelcome from '@/components/TypedWelcome';
 
 export const metadata: Metadata = {
   title: 'Personage — AI Formula Recommendation Engine',
@@ -20,6 +22,9 @@ export default function Home() {
       {/* ── Brand Panel (desktop only) ─────────────────── */}
       <aside className="hidden lg:flex w-[400px] xl:w-[440px] flex-shrink-0 bg-brand-teal flex-col relative overflow-hidden">
 
+        {/* Granim animated gradient background */}
+        <GranimBackground />
+
         {/* Decorative circles */}
         <div aria-hidden className="absolute -top-28 -right-28 w-96 h-96 rounded-full bg-white/[0.04]" />
         <div aria-hidden className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-brand-peach/[0.1]" />
@@ -37,10 +42,11 @@ export default function Home() {
 
           {/* Hero copy */}
           <div className="flex-1 flex flex-col justify-center py-10">
-            <p className="text-brand-peach/60 text-[9px] tracking-[0.3em] uppercase font-bold mb-5 select-none">
-              Formula Engine
-            </p>
+            {/* typed.js welcome line */}
+            <TypedWelcome />
             <h2
+              data-aos="fade-up"
+              data-aos-delay="100"
               className="font-serif italic text-white font-light leading-[1.08]"
               style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)' }}
             >
@@ -48,15 +54,24 @@ export default function Home() {
               <span className="text-brand-peach">Evidence-based.</span><br />
               Personalized.
             </h2>
-            <p className="mt-6 text-white/35 text-[12px] leading-relaxed max-w-[230px]">
+            <p
+              data-aos="fade-up"
+              data-aos-delay="200"
+              className="mt-6 text-white/35 text-[12px] leading-relaxed max-w-[230px]"
+            >
               Practitioner-grade supplement recommendations with precise dosages and clinical rationale — built for health professionals.
             </p>
           </div>
 
           {/* Feature list */}
           <div className="border-t border-white/10 pt-7 space-y-4 mb-10">
-            {FEATURES.map(f => (
-              <div key={f} className="flex items-center gap-3">
+            {FEATURES.map((f, i) => (
+              <div
+                key={f}
+                data-aos="fade-up"
+                data-aos-delay={String(300 + i * 80)}
+                className="flex items-center gap-3"
+              >
                 <div className="w-[18px] h-[18px] rounded-full border border-brand-peach/30 flex items-center justify-center flex-shrink-0">
                   <svg className="w-2.5 h-2.5 text-brand-peach/80" fill="none" viewBox="0 0 10 8" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M1 4l2.5 2.5L9 1" />
@@ -69,6 +84,8 @@ export default function Home() {
 
           {/* CTA */}
           <a
+            data-aos="fade-up"
+            data-aos-delay="600"
             href="https://personage.com"
             target="_blank"
             rel="noopener noreferrer"
